@@ -5,7 +5,7 @@ Library that providing Mix tasks for encrypting and decrypting secret files to s
 ## Installation
 
 The package can be installed
-by adding `secrex` to your list of dependencies in `mix.exs`:
+by adding `secrex` to our list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
@@ -17,7 +17,7 @@ end
 
 ## Usage
 
-Secrex requires some configuration in order to work. For example, in config/config.exs:
+Secrex requires some configuration in order to work. For example, in `config/config.exs`:
 
 ```elixir
 config :secrex,
@@ -25,8 +25,8 @@ config :secrex,
   files: ["config/env/prod.secret.exs"]
 ```
 
-* `key_file` is a path for a file that contain a key that will be used for encrypting and decrypting
-  if attribute is not provided then key will be asked to enter
+* `key_file` is a path to the key file that will be used for encryption and decryption
+  if this is not configured, you will be prompted to enter it later
 * `files` is a list of files that needs to be encrypted and decrypted
 
 ### Mix tasks
@@ -34,14 +34,14 @@ config :secrex,
 * `mix secrex.encrypt`
 * `mix secrex.decrypt`
 
-### Useful functions
+### Helper functions
 
 For example if we have a `deploy` task, we can prevent deploy if secrets were diverged
 
 ```elixir
 if Mix.Secrex.secret_files_changed?() do
   Mix.raise(
-    "encrypted files are not matching decrypted\n" <>
+    "Encrypted files are not matching decrypted\n" <>
     "please run \"mix secrex.decrypt\" to have latest config files"
   )
 end
