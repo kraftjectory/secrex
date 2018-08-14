@@ -3,6 +3,8 @@ defmodule Mix.Tasks.Secrex.Decrypt do
 
   import Mix.Secrex
 
+  @shortdoc "Decrypt secret files"
+
   def run(_args) do
     key = encryption_key()
 
