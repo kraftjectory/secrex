@@ -1,5 +1,7 @@
 # Secrex
 
+[![Hex Version](https://img.shields.io/hexpm/v/secrex.svg "Hex Version")](https://hex.pm/packages/secrex)
+
 Library that providing Mix tasks for encrypting and decrypting secret files to safely keep them in the repo
 
 ## Installation
@@ -10,7 +12,7 @@ by adding `secrex` to our list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:secrex, github: "ForzaElixir/secrex", tag: "v0.1.0", runtime: false}
+    {:secrex, "~> 0.1.0", runtime: false}
   ]
 end
 ```
