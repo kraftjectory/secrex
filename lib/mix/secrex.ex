@@ -1,4 +1,8 @@
 defmodule Mix.Secrex do
+  @moduledoc """
+  Set of utility functions.
+  """
+
   def secret_files() do
     Application.get_env(:secrex, :files)
   end
@@ -13,6 +17,19 @@ defmodule Mix.Secrex do
     end
   end
 
+  @doc ~S"""
+  The function to check that decrypted secret files are in sync with the currently encripted ones.
+
+  For example, it can be used in a deployment process to prevent deploy if secrets were diverged:
+
+      if Mix.Secrex.secret_files_changed?() do
+        Mix.raise(
+          "Encrypted files are not matching decrypted\n" <>
+          "please run \"mix secrex.decrypt\" to have latest config files"
+        )
+      end
+
+  """
   def secret_files_changed?() do
     key = encryption_key()
 
@@ -23,6 +40,7 @@ defmodule Mix.Secrex do
     end)
   end
 
+  @doc false
   def encrypted_path(path) do
     path <> ".enc"
   end
