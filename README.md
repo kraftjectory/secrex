@@ -23,7 +23,7 @@ Secrex requires some configuration in order to work. For example, in `config/con
 
 ```elixir
 config :secrex,
-  key_file: ".secrets_key",
+  key_file: ".secret-key",
   files: ["config/env/prod.secret.exs"]
 ```
 
