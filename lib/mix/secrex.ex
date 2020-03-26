@@ -3,18 +3,20 @@ defmodule Mix.Secrex do
     Application.get_env(:secrex, :files)
   end
 
-  def encryption_key() do
-    key_path = Application.get_env(:secrex, :key_file)
+  def get_encryption_key() do
+    case read_encryption_key() do
+      {:ok, key} ->
+        trim_key = String.trim(key)
 
-    if key_path do
-      File.read!(key_path)
-    else
-      get_password("Enter the encryption key:")
+        if key == trim_key, do: {:plain_key, key}, else: {:trimmed_key, trim_key}
+
+      {:error, :no_key_file} ->
+        {:console_key, get_password("Enter the encryption key:")}
     end
   end
 
   def secret_files_changed?() do
-    key = encryption_key()
+    {_, key} = get_encryption_key()
 
     Enum.any?(secret_files(), fn path ->
       enc_path = encrypted_path(path)
@@ -33,6 +35,18 @@ defmodule Mix.Secrex do
 
   def decrypt(path, key) do
     Secrex.AES.decrypt(File.read!(path), key)
+  end
+
+  def write_encryption_key(key) do
+    File.write!(Application.get_env(:secrex, :key_file), key)
+  end
+
+  # Helpers
+  defp read_encryption_key do
+    case Application.get_env(:secrex, :key_file) do
+      nil -> {:error, :no_key_file}
+      key_path -> {:ok, File.read!(key_path)}
+    end
   end
 
   # Hidden password input, stolen from hex.pm
