@@ -13,7 +13,7 @@ defmodule Mix.Secrex do
     key_path = Application.get_env(:secrex, :key_file)
 
     if key_path do
-      key_path |> Path.expand() |> File.read!()
+      key_path |> Path.expand() |> File.read!() |> String.trim_trailing()
     else
       get_password("Enter the encryption key:")
     end
