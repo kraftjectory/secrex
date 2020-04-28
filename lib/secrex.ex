@@ -1,19 +1,19 @@
 defmodule Secrex do
   @moduledoc """
-  Simple and secure secrets manager in Elixir projects.
+  Simple and secure secrets manager fo Elixir projects.
 
   ## Configuration
 
-  Secrex reads neccessary configuration from the `:secrex` application. For example, in your application’s configuration (`my_app/config/config.exs`):
+  Secrets requires some configurations to work. Add this to your `config.exs`:
 
       config :secrex,
         key_file: ".secrets_key",
         files: ["config/env/prod.secret.exs"]
 
-  The following is a list of all the supported options:
+  ### Supported options
 
-  * `key_file` - (binary) path to the key file that will be used for encryption and decryption
-    if the option is not set, you will be prompted to enter a key later
-  * `files` - (list of binaries) list of files that needs to be encrypted and decrypted
+  * `key_file` - path to the key file used for encryption and decryption.
+    If not set, you will be prompted to enter a key.
+  * `files` - list of files to be encrypted and decrypted.
   """
 end

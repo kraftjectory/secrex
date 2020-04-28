@@ -1,11 +1,13 @@
 defmodule Mix.Tasks.Secrex.Decrypt do
+  @moduledoc """
+  Decrypts secrets to the configured files.
+  """
+
   use Mix.Task
 
   import Mix.Secrex
 
-  @shortdoc "Decrypts secret files"
-
-  @moduledoc "Decrypts secret files"
+  @shortdoc "Decrypts secrets to the configured files"
 
   @impl true
   def run(_args) do
