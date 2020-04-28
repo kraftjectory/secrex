@@ -21,8 +21,22 @@ For usage information see [the documentation](https://hexdocs.pm/secrex).
 
 ## Mix tasks
 
+There are two Mix tasks available:
+
 * `mix secrex.encrypt`
 * `mix secrex.decrypt`
+
+Secrex requires some configuration in order to work. For example, in `config/config.exs`:
+
+```elixir
+config :secrex,
+  key_file: ".secret-key",
+  files: ["config/env/prod.secret.exs"]
+```
+
+* `key_file` is a path to the key file that will be used for encryption and decryption
+  if this is not configured, you will be prompted to enter it later
+* `files` is a list of files that needs to be encrypted and decrypted
 
 ## License
 
