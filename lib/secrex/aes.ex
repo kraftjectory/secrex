@@ -1,4 +1,6 @@
 defmodule Secrex.AES do
+  @moduledoc false
+
   def encrypt(input, key) do
     iv = :crypto.strong_rand_bytes(16)
     key = hash(key)

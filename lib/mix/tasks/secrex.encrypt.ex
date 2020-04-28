@@ -1,11 +1,13 @@
 defmodule Mix.Tasks.Secrex.Encrypt do
+  @moduledoc """
+  Encrypts secrets to the configured files.
+  """
+
   use Mix.Task
 
   import Mix.Secrex
 
-  @shortdoc "Encrypts secret files"
-
-  @moduledoc "Encrypts secret files"
+  @shortdoc "Encrypts secrets to the configured files"
 
   @impl true
   def run(_args) do

@@ -1,12 +1,14 @@
 defmodule Mix.Secrex do
   @moduledoc """
-  Set of utility functions.
+  Utility functions to work with secret files.
   """
 
+  @doc false
   def secret_files() do
     Application.get_env(:secrex, :files)
   end
 
+  @doc false
   def encryption_key() do
     key_path = Application.get_env(:secrex, :key_file)
 
@@ -18,18 +20,18 @@ defmodule Mix.Secrex do
   end
 
   @doc ~S"""
-  The function to check that decrypted secret files are in sync with the currently encripted ones.
+  Checks if the local decrypted files are in sync with the encrypted ones.
 
-  For example, it can be used in a deployment process to prevent deploy if secrets were diverged:
+  This could be useful in deployment process. For instance, to abort deployment if secrets diverge:
 
       if Mix.Secrex.secret_files_changed?() do
         Mix.raise(
-          "Encrypted files are not matching decrypted\n" <>
-          "please run \"mix secrex.decrypt\" to have latest config files"
+          "Secret files are not in sync. Please run \"mix secrex.decrypt\" to retrieve latest updates."
         )
       end
 
   """
+  @spec secret_files_changed?() :: boolean()
   def secret_files_changed?() do
     key = encryption_key()
 
@@ -45,10 +47,12 @@ defmodule Mix.Secrex do
     path <> ".enc"
   end
 
+  @doc false
   def encrypt(path, key) do
     Secrex.AES.encrypt(File.read!(path), key)
   end
 
+  @doc false
   def decrypt(path, key) do
     Secrex.AES.decrypt(File.read!(path), key)
   end
