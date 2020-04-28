@@ -2,7 +2,7 @@ defmodule Secrex.MixProject do
   use Mix.Project
 
   @name "Secrex"
-  @version "0.1.0"
+  @version "0.1.1"
   @source_url "https://github.com/ForzaElixir/secrex"
 
   def project do
@@ -14,7 +14,7 @@ defmodule Secrex.MixProject do
       deps: deps(),
       package: package(),
       name: @name,
-      description: "Mix tasks to encrypt and decrypt files to safely keep them in the repo",
+      description: "Simple and secure secrets manager in Elixir projects",
       docs: [
         main: @name,
         source_ref: "v#{@version}",
@@ -30,7 +30,7 @@ defmodule Secrex.MixProject do
   end
 
   defp deps do
-    []
+    [{:ex_doc, "~> 0.18.0", only: :dev}]
   end
 
   defp package do

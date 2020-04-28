@@ -3,8 +3,11 @@ defmodule Mix.Tasks.Secrex.Encrypt do
 
   import Mix.Secrex
 
-  @shortdoc "Encrypt secret files"
+  @shortdoc "Encrypts secret files"
 
+  @moduledoc "Encrypts secret files"
+
+  @impl true
   def run(_args) do
     key = encryption_key()
 
