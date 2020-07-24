@@ -21,6 +21,6 @@ defmodule Mix.Tasks.Secrex.Encrypt do
       File.write!(encrypted_path(path), encrypted)
     end
 
-    Mix.shell().info("Files encrypted")
+    Mix.shell().info("Files have been encrypted")
   end
 end
