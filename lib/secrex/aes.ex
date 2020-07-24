@@ -11,13 +11,13 @@ defmodule Secrex.AES do
 
   @impl true
   def encrypt(plaintext, key) do
-    init_vector = initialize_vector()
-    hashed_key = hash(key)
+    init_vector = initialize_vector(@iv_length)
+    key_digest = hash(key)
 
     {encrypted, tag} =
       :crypto.block_encrypt(
         :aes_gcm,
-        hashed_key,
+        key_digest,
         init_vector,
         {@aad, plaintext, @tag_length}
       )
@@ -27,20 +27,20 @@ defmodule Secrex.AES do
 
   @impl true
   def decrypt(ciphertext, key) do
-    hashed_key = hash(key)
+    key_digest = hash(key)
 
     case ciphertext do
-      <<init_vector::binary-size(@iv_length), tag::binary-size(@tag_length), encrypted::binary>> ->
-        plaintext = :crypto.block_decrypt(:aes_gcm, hashed_key, init_vector, {@aad, encrypted, tag})
+      <<init_vector::size(@iv_length)-bytes, tag::size(@tag_length)-bytes, encrypted::binary>> ->
+        plaintext = :crypto.block_decrypt(:aes_gcm, key_digest, init_vector, {@aad, encrypted, tag})
 
         {:ok, plaintext}
 
       _ ->
-        {:error, "invalid ciphertext"}
+        {:error, :invalid_ciphertext}
     end
   end
 
   defp hash(key), do: :crypto.hash(:sha256, key)
 
-  defp initialize_vector(), do: :crypto.strong_rand_bytes(16)
+  defp initialize_vector(length), do: :crypto.strong_rand_bytes(length)
 end

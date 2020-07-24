@@ -23,7 +23,7 @@ defmodule Mix.Tasks.Secrex.Decrypt do
           Mix.shell().info("Files have been decrypted")
 
         {:error, reason} ->
-          Mix.raise("Could not decrypt file, reason: " <> inspect(reason))
+          Mix.raise("Cannot decrypt file, reason: " <> inspect(reason))
       end
     end
   end
