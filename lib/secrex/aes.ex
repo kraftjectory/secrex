@@ -1,18 +1,46 @@
 defmodule Secrex.AES do
   @moduledoc false
 
-  def encrypt(input, key) do
-    iv = :crypto.strong_rand_bytes(16)
-    key = hash(key)
-    {encrypted, tag} = :crypto.block_encrypt(:aes_gcm, key, iv, {"AES256GCM", input, 16})
-    iv <> tag <> encrypted
+  @behaviour Secrex.Cipher
+
+  # Additional Authenticated Data.
+  @aad "AES256GCM"
+
+  @iv_length 16
+  @tag_length 16
+
+  @impl true
+  def encrypt(plaintext, key) do
+    init_vector = initialize_vector(@iv_length)
+    key_digest = hash(key)
+
+    {encrypted, tag} =
+      :crypto.block_encrypt(
+        :aes_gcm,
+        key_digest,
+        init_vector,
+        {@aad, plaintext, @tag_length}
+      )
+
+    {:ok, init_vector <> tag <> encrypted}
   end
 
-  def decrypt(encrypted, key) do
-    key = hash(key)
-    <<iv::binary-16, tag::binary-16, encrypted::binary>> = encrypted
-    :crypto.block_decrypt(:aes_gcm, key, iv, {"AES256GCM", encrypted, tag})
+  @impl true
+  def decrypt(ciphertext, key) do
+    key_digest = hash(key)
+
+    case ciphertext do
+      <<init_vector::size(@iv_length)-bytes, tag::size(@tag_length)-bytes, encrypted::binary>> ->
+        plaintext = :crypto.block_decrypt(:aes_gcm, key_digest, init_vector, {@aad, encrypted, tag})
+
+        {:ok, plaintext}
+
+      _ ->
+        {:error, :invalid_ciphertext}
+    end
   end
 
-  defp hash(input), do: :crypto.hash(:sha256, input)
+  defp hash(key), do: :crypto.hash(:sha256, key)
+
+  defp initialize_vector(length), do: :crypto.strong_rand_bytes(length)
 end

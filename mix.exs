@@ -5,7 +5,7 @@ defmodule Secrex.MixProject do
   @version "0.1.1"
   @source_url "https://github.com/ForzaElixir/secrex"
 
-  def project do
+  def project() do
     [
       app: :secrex,
       version: @version,
@@ -23,17 +23,20 @@ defmodule Secrex.MixProject do
     ]
   end
 
-  def application do
+  def application() do
     [
       extra_applications: [:logger]
     ]
   end
 
-  defp deps do
-    [{:ex_doc, "~> 0.18.0", only: :dev}]
+  defp deps() do
+    [
+      {:stream_data, "~> 0.4", only: :test},
+      {:ex_doc, "~> 0.18.0", only: :dev}
+    ]
   end
 
-  defp package do
+  defp package() do
     [
       licenses: ["ISC"],
       links: %{"GitHub" => @source_url}
