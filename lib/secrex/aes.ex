@@ -31,7 +31,8 @@ defmodule Secrex.AES do
 
     case ciphertext do
       <<init_vector::size(@iv_length)-bytes, tag::size(@tag_length)-bytes, encrypted::binary>> ->
-        plaintext = :crypto.block_decrypt(:aes_gcm, key_digest, init_vector, {@aad, encrypted, tag})
+        plaintext =
+          :crypto.block_decrypt(:aes_gcm, key_digest, init_vector, {@aad, encrypted, tag})
 
         {:ok, plaintext}
 
