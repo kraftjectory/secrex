@@ -12,6 +12,9 @@ defmodule Secrex.AESTest do
       assert {:ok, ciphertext} = AES.encrypt(plaintext, key)
 
       assert AES.decrypt(ciphertext, key) == {:ok, plaintext}
+
+      incorrect_key = key <> "A"
+      assert AES.decrypt(ciphertext, incorrect_key) == {:error, :incorrect_key_or_ciphertext}
     end
   end
 end
