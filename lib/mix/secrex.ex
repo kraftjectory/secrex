@@ -64,6 +64,7 @@ defmodule Mix.Secrex do
     value = IO.gets(prompt <> " ")
 
     send(pid, {:done, self(), ref})
+
     receive do
       {:done, ^pid, ^ref} -> :ok
     end
