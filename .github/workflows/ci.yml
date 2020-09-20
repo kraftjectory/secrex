@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  format:
+    name: Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Setup Elixir
+        uses: actions/setup-elixir@v1
+        with:
+          otp-version: 22.2
+          elixir-version: 1.10.1
+
+      - name: Install dependencies
+        run: mix deps.get
+
+      - name: Check mix format
+        run: mix format --check-formatted
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        versions:
+          - erlang: 23.0
+            elixir: 1.10.3
+          - erlang: 22.3
+            elixir: 1.9.4
+          - erlang: 21.3
+            elixir: 1.8.2
+          - erlang: 20.3
+            elixir: 1.7.4
+          - erlang: 19.3
+            elixir: 1.6.6
+    env:
+      MIX_ENV: test
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Elixir
+        uses: actions/setup-elixir@v1
+        with:
+          elixir-version: ${{matrix.versions.elixir}}
+          otp-version: ${{matrix.versions.erlang}}
+
+      - name: Install dependencies
+        run: mix deps.get
+
+      - name: Run tests
+        run: mix test
