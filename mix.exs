@@ -2,8 +2,8 @@ defmodule Secrex.MixProject do
   use Mix.Project
 
   @name "Secrex"
-  @version "0.1.1"
-  @source_url "https://github.com/ForzaElixir/secrex"
+  @version "0.2.0"
+  @source_url "https://github.com/kraftjectory/secrex"
 
   def project() do
     [
@@ -18,7 +18,11 @@ defmodule Secrex.MixProject do
       docs: [
         main: @name,
         source_ref: "v#{@version}",
-        source_url: @source_url
+        source_url: @source_url,
+        extras: [
+          "README.md",
+          "CHANGELOG.md"
+        ]
       ]
     ]
   end
@@ -32,7 +36,7 @@ defmodule Secrex.MixProject do
   defp deps() do
     [
       {:stream_data, "~> 0.4", only: :test},
-      {:ex_doc, "~> 0.18.0", only: :dev}
+      {:ex_doc, "~> 0.20.0", only: :dev}
     ]
   end
 
