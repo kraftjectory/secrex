@@ -13,7 +13,7 @@ defmodule Mix.Secrex do
     key_path = Application.get_env(:secrex, :key_file)
 
     if key_path do
-      File.read!(key_path)
+      key_path |> Path.expand() |> File.read!()
     else
       get_password("Enter the encryption key:")
     end
@@ -49,22 +49,25 @@ defmodule Mix.Secrex do
 
   @doc false
   def encrypt(path, key) do
-    Secrex.AES.encrypt(File.read!(path), key)
+    path |> File.read!() |> Secrex.AES.encrypt(key)
   end
 
   @doc false
   def decrypt(path, key) do
-    Secrex.AES.decrypt(File.read!(path), key)
+    path |> File.read!() |> Secrex.AES.decrypt(key)
   end
 
-  # Hidden password input, stolen from hex.pm
+  # Hidden password input, taken from Hex.
   defp get_password(prompt) do
     pid = spawn_link(fn -> get_password_loop(prompt) end)
     ref = make_ref()
     value = IO.gets(prompt <> " ")
 
     send(pid, {:done, self(), ref})
-    receive do: ({:done, ^pid, ^ref} -> :ok)
+
+    receive do
+      {:done, ^pid, ^ref} -> :ok
+    end
 
     value
   end

@@ -11,10 +11,10 @@ defmodule Mix.Tasks.SecrexTest do
     plaintext = "this is a secret"
     source_file = @secret_path <> Integer.to_string(System.system_time(:microsecond))
 
-    File.mkdir_p!("/tmp/secrex")
+    File.mkdir!(@secret_path)
     File.write!(source_file, plaintext)
 
-    Application.put_env(:secrex, :key_file, Path.expand("test/support/secret_key"))
+    Application.put_env(:secrex, :key_file, "test/support/secret-key")
     Application.put_env(:secrex, :files, [source_file])
 
     output =
