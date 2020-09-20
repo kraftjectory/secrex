@@ -31,10 +31,13 @@ defmodule Secrex.AES do
 
     case ciphertext do
       <<init_vector::size(@iv_length)-bytes, tag::size(@tag_length)-bytes, encrypted::binary>> ->
-        plaintext =
-          :crypto.block_decrypt(:aes_gcm, key_digest, init_vector, {@aad, encrypted, tag})
+        case :crypto.block_decrypt(:aes_gcm, key_digest, init_vector, {@aad, encrypted, tag}) do
+          :error ->
+            {:error, :incorrect_key_or_ciphertext}
 
-        {:ok, plaintext}
+          plaintext ->
+            {:ok, plaintext}
+        end
 
       _ ->
         {:error, :invalid_ciphertext}
