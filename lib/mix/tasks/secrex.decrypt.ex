@@ -20,11 +20,12 @@ defmodule Mix.Tasks.Secrex.Decrypt do
       case decrypt(enc_path, key) do
         {:ok, decrypted} ->
           File.write!(path, decrypted)
-          Mix.shell().info("Files have been decrypted")
 
         {:error, reason} ->
           Mix.raise("Cannot decrypt file, reason: " <> inspect(reason))
       end
     end
+
+    Mix.shell().info("Files have been decrypted")
   end
 end
