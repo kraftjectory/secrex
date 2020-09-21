@@ -16,14 +16,7 @@ defmodule Mix.Tasks.Secrex.Decrypt do
     for path <- secret_files() do
       enc_path = encrypted_path(path)
       Mix.shell().info("Decrypting #{enc_path}")
-
-      case decrypt(enc_path, key) do
-        {:ok, decrypted} ->
-          File.write!(path, decrypted)
-
-        {:error, reason} ->
-          Mix.raise("Cannot decrypt file, reason: " <> inspect(reason))
-      end
+      File.write!(path, decrypt(enc_path, key))
     end
 
     Mix.shell().info("Files have been decrypted")

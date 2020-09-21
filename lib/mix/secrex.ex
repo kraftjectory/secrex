@@ -54,7 +54,13 @@ defmodule Mix.Secrex do
 
   @doc false
   def decrypt(path, key) do
-    path |> File.read!() |> Secrex.AES.decrypt(key)
+    case Secrex.AES.decrypt(File.read!(path), key) do
+      {:ok, decrypted} ->
+        decrypted
+
+      {:error, reason} ->
+        Mix.raise("Cannot decrypt file, reason: " <> inspect(reason))
+    end
   end
 
   # Hidden password input, taken from Hex.
