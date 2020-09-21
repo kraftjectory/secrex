@@ -2,7 +2,7 @@ defmodule Secrex.MixProject do
   use Mix.Project
 
   @name "Secrex"
-  @version "0.2.0"
+  @version "0.2.1"
   @source_url "https://github.com/kraftjectory/secrex"
 
   def project() do
