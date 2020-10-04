@@ -7,7 +7,7 @@ defmodule Secrex do
   Secrets requires some configurations to work. Add this to your `config.exs`:
 
       config :secrex,
-        key_file: ".secrets_key",
+        key_file: ".secret-key",
         files: ["config/env/prod.secret.exs"]
 
   ### Supported options
