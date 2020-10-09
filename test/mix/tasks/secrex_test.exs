@@ -1,9 +1,25 @@
 defmodule Mix.Tasks.SecrexTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
 
   import ExUnit.CaptureIO
 
   setup :clean_up_directory
+
+  setup do
+    Application.put_env(:secrex, :key_file, "test/support/secret-key")
+    Application.delete_env(:secrex, :files)
+    Application.delete_env(:secrex, :cipher)
+  end
+
+  defmodule PlaintextCipher do
+    @behaviour Secrex.Cipher
+
+    @impl true
+    def encrypt(plaintext, _key), do: {:ok, plaintext}
+
+    @impl true
+    def decrypt(ciphertext, _key), do: {:ok, ciphertext}
+  end
 
   @secret_path "/tmp/secrex"
 
@@ -14,7 +30,6 @@ defmodule Mix.Tasks.SecrexTest do
     File.mkdir!(@secret_path)
     File.write!(source_file, plaintext)
 
-    Application.put_env(:secrex, :key_file, "test/support/secret-key")
     Application.put_env(:secrex, :files, [source_file])
 
     output =
@@ -26,6 +41,7 @@ defmodule Mix.Tasks.SecrexTest do
     assert output =~ "Files have been encrypted"
 
     File.rm!(source_file)
+    assert File.read!(source_file <> ".enc") != plaintext
 
     output =
       capture_io(fn ->
@@ -34,6 +50,26 @@ defmodule Mix.Tasks.SecrexTest do
 
     assert output =~ "Decrypting #{source_file}"
     assert output =~ "Files have been decrypted"
+
+    assert File.read!(source_file) == plaintext
+  end
+
+  test "uses configured cipher" do
+    plaintext = "this is a secret"
+    source_file = @secret_path <> Integer.to_string(System.system_time(:microsecond))
+
+    File.mkdir!(@secret_path)
+    File.write!(source_file, plaintext)
+
+    Application.put_env(:secrex, :files, [source_file])
+    Application.put_env(:secrex, :cipher, PlaintextCipher)
+
+    capture_io(fn -> Mix.Tasks.Secrex.Encrypt.run([]) end)
+
+    File.rm!(source_file)
+    assert File.read!(source_file <> ".enc") == plaintext
+
+    capture_io(fn -> Mix.Tasks.Secrex.Decrypt.run([]) end)
 
     assert File.read!(source_file) == plaintext
   end
