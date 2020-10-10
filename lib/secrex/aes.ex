@@ -1,7 +1,11 @@
 defmodule Secrex.AES do
-  @moduledoc false
+  @moduledoc """
+  This module is an implementation of Secrex.Cipher using AES256-GCM.
+  """
 
-  @behaviour Secrex.Cipher
+  alias Secrex.Cipher
+
+  @behaviour Cipher
 
   # Additional Authenticated Data.
   @aad "AES256GCM"
@@ -9,6 +13,7 @@ defmodule Secrex.AES do
   @iv_length 16
   @tag_length 16
 
+  @spec encrypt(Cipher.plaintext(), Cipher.key()) :: {:ok, Cipher.ciphertext()}
   @impl true
   def encrypt(plaintext, key) do
     init_vector = initialize_vector(@iv_length)
@@ -25,6 +30,9 @@ defmodule Secrex.AES do
     {:ok, init_vector <> tag <> encrypted}
   end
 
+  @callback decrypt(Cipher.ciphertext(), Cipher.key()) ::
+              {:ok, Cipher.plaintext()}
+              | {:error, :invalid_ciphertext | :incorrect_key_or_ciphertext}
   @impl true
   def decrypt(ciphertext, key) do
     key_digest = hash(key)
