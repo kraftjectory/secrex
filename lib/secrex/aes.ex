@@ -23,7 +23,6 @@ defmodule Secrex.AES do
   @doc """
   Encrypts data using AES256-GCM.
   """
-  @doc since: "0.3.0"
   @spec encrypt(Cipher.plaintext(), Cipher.key()) :: {:ok, Cipher.ciphertext()}
   @impl true
   def encrypt(plaintext, key) do
@@ -42,7 +41,6 @@ defmodule Secrex.AES do
   end
 
   @doc "Decrypts data using AES256-GCM"
-  @doc since: "0.3.0"
   @spec decrypt(Cipher.ciphertext(), Cipher.key()) ::
           {:ok, Cipher.plaintext()}
           | {:error, :invalid_ciphertext | :incorrect_key_or_ciphertext}
