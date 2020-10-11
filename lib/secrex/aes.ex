@@ -30,9 +30,9 @@ defmodule Secrex.AES do
     {:ok, init_vector <> tag <> encrypted}
   end
 
-  @callback decrypt(Cipher.ciphertext(), Cipher.key()) ::
-              {:ok, Cipher.plaintext()}
-              | {:error, :invalid_ciphertext | :incorrect_key_or_ciphertext}
+  @spec decrypt(Cipher.ciphertext(), Cipher.key()) ::
+          {:ok, Cipher.plaintext()}
+          | {:error, :invalid_ciphertext | :incorrect_key_or_ciphertext}
   @impl true
   def decrypt(ciphertext, key) do
     key_digest = hash(key)

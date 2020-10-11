@@ -1,5 +1,10 @@
 # Changelog
 
+## To be released
+
+  * Introduced `:cipher` option.
+  * Publicize `Secrex.AES`.
+
 ## v0.2.1
 
   * Fixed `Mix.Secrex.secret_files_changed?/0`
