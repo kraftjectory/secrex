@@ -19,6 +19,11 @@ defmodule Mix.Secrex do
     end
   end
 
+  @doc false
+  def get_cipher() do
+    Application.get_env(:secrex, :cipher, Secrex.AES)
+  end
+
   @doc ~S"""
   Checks if the local decrypted files are in sync with the encrypted ones.
 
@@ -49,12 +54,12 @@ defmodule Mix.Secrex do
 
   @doc false
   def encrypt(path, key) do
-    path |> File.read!() |> Secrex.AES.encrypt(key)
+    path |> File.read!() |> get_cipher().encrypt(key)
   end
 
   @doc false
   def decrypt(path, key) do
-    case Secrex.AES.decrypt(File.read!(path), key) do
+    case get_cipher().decrypt(File.read!(path), key) do
       {:ok, decrypted} ->
         decrypted
 
