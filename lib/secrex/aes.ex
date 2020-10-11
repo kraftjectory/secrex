@@ -8,6 +8,7 @@ defmodule Secrex.AES do
       iex> {:ok, encrypted} = Secrex.AES.encrypt("Hello, World!", encryption_key)
       iex> Secrex.AES.decrypt(encrypted, encryption_key)
       {:ok, "Hello, World!"}
+
   """
 
   alias Secrex.Cipher
