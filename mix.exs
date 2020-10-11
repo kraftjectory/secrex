@@ -10,7 +10,6 @@ defmodule Secrex.MixProject do
       app: :secrex,
       version: @version,
       elixir: "~> 1.6",
-      start_permanent: Mix.env() == :prod,
       deps: deps(),
       package: package(),
       name: @name,
@@ -27,11 +26,7 @@ defmodule Secrex.MixProject do
     ]
   end
 
-  def application() do
-    [
-      extra_applications: [:logger]
-    ]
-  end
+  def application(), do: []
 
   defp deps() do
     [
