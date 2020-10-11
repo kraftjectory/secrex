@@ -34,9 +34,11 @@ config :secrex,
   files: ["config/env/prod.secret.exs"]
 ```
 
-* `key_file` is a path to the key file that will be used for encryption and decryption
+* `:key_file` - a path to the key file that will be used for encryption and decryption
   if this is not configured, you will be prompted to enter it later
-* `files` is a list of files that needs to be encrypted and decrypted
+* `:files` - list of files that needs to be encrypted and decrypted
+* `:cipher` - the cipher module to handle secret encryption/decryption.
+  Must be an implementation of `Secrex.Cipher`. Defaults to `Secrex.AES`.
 
 ## License
 

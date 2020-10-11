@@ -6,6 +6,8 @@ defmodule Secrex.AESTest do
   import ExUnitProperties
   import StreamData
 
+  doctest Secrex.AES
+
   property "encrypt/2 and decrypt/2" do
     check all(
             plaintext <- binary(min_length: 1),
