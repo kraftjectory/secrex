@@ -1,6 +1,14 @@
 defmodule Secrex.AES do
   @moduledoc """
   This module is an implementation of Secrex.Cipher using AES256-GCM.
+
+  ## Example
+
+      iex> encryption_key = "very-secretive"
+      iex> {:ok, encrypted} = Secrex.AES.encrypt("Hello, World!", encryption_key)
+      iex> Secrex.AES.decrypt(encrypted, encryption_key)
+      {:ok, "Hello, World!"}
+
   """
 
   alias Secrex.Cipher
@@ -13,6 +21,9 @@ defmodule Secrex.AES do
   @iv_length 16
   @tag_length 16
 
+  @doc """
+  Encrypts data using AES256-GCM.
+  """
   @spec encrypt(Cipher.plaintext(), Cipher.key()) :: {:ok, Cipher.ciphertext()}
   @impl true
   def encrypt(plaintext, key) do
@@ -30,9 +41,10 @@ defmodule Secrex.AES do
     {:ok, init_vector <> tag <> encrypted}
   end
 
-  @callback decrypt(Cipher.ciphertext(), Cipher.key()) ::
-              {:ok, Cipher.plaintext()}
-              | {:error, :invalid_ciphertext | :incorrect_key_or_ciphertext}
+  @doc "Decrypts data using AES256-GCM"
+  @spec decrypt(Cipher.ciphertext(), Cipher.key()) ::
+          {:ok, Cipher.plaintext()}
+          | {:error, :invalid_ciphertext | :incorrect_key_or_ciphertext}
   @impl true
   def decrypt(ciphertext, key) do
     key_digest = hash(key)
