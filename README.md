@@ -1,5 +1,6 @@
 # Secrex
 
+![CI Status](https://github.com/kraftjectory/secrex/workflows/CI/badge.svg)
 [![Hex Version](https://img.shields.io/hexpm/v/secrex.svg "Hex Version")](https://hex.pm/packages/secrex)
 
 Simple and secure secrets manager in Elixir projects
