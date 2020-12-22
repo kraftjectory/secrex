@@ -5,7 +5,7 @@ defmodule Mix.Secrex do
 
   @doc false
   def secret_files() do
-    Application.get_env(:secrex, :files)
+    Application.get_env(:secrex, :files, [])
   end
 
   @doc false

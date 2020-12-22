@@ -74,6 +74,12 @@ defmodule Mix.Tasks.SecrexTest do
     assert File.read!(source_file) == plaintext
   end
 
+  test "handles when no files configured" do
+    output = capture_io(fn -> Mix.Tasks.Secrex.Decrypt.run([]) end)
+
+    assert output =~ "Files have been decrypted"
+  end
+
   defp clean_up_directory(_) do
     File.rm_rf!(@secret_path)
     :ok
