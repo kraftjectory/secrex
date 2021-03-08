@@ -13,7 +13,7 @@ defmodule Secrex.MixProject do
       deps: deps(),
       package: package(),
       name: @name,
-      description: "Simple and secure secrets manager in Elixir projects",
+      description: "Simple and secure secrets manager in Elixir projects.",
       docs: [
         main: @name,
         source_ref: "v#{@version}",
@@ -26,12 +26,14 @@ defmodule Secrex.MixProject do
     ]
   end
 
-  def application(), do: []
+  def application() do
+    [extra_applications: [:crypto]]
+  end
 
   defp deps() do
     [
       {:stream_data, "~> 0.4", only: :test},
-      {:ex_doc, "~> 0.20.0", only: :dev}
+      {:ex_doc, "~> 0.20.0", only: :dev, runtime: false}
     ]
   end
 
