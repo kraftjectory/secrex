@@ -13,10 +13,11 @@ defmodule Mix.Secrex do
     key_path = Application.get_env(:secrex, :key_file)
 
     if key_path do
-      key_path |> Path.expand() |> File.read!() |> String.trim_trailing()
+      key_path |> Path.expand() |> File.read!()
     else
-      get_password("Enter the encryption key:")
+      input_encryption_key("Enter the encryption key:")
     end
+    |> String.trim_trailing()
   end
 
   @doc false
@@ -68,9 +69,9 @@ defmodule Mix.Secrex do
     end
   end
 
-  # Hidden password input, taken from Hex.
-  defp get_password(prompt) do
-    pid = spawn_link(fn -> get_password_loop(prompt) end)
+  # Encryption key prompt that hides input; taken from Hex.
+  defp input_encryption_key(prompt) do
+    pid = spawn_link(fn -> input_loop(prompt) end)
     ref = make_ref()
     value = IO.gets(prompt <> " ")
 
@@ -83,7 +84,7 @@ defmodule Mix.Secrex do
     value
   end
 
-  defp get_password_loop(prompt) do
+  defp input_loop(prompt) do
     receive do
       {:done, parent, ref} ->
         send(parent, {:done, self(), ref})
@@ -91,7 +92,7 @@ defmodule Mix.Secrex do
     after
       1 ->
         IO.write(:standard_error, "\e[2K\r#{prompt} ")
-        get_password_loop(prompt)
+        input_loop(prompt)
     end
   end
 end
