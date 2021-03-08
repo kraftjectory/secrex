@@ -15,10 +15,18 @@ defmodule Mix.Tasks.SecrexTest do
     @behaviour Secrex.Cipher
 
     @impl true
-    def encrypt(plaintext, _key), do: {:ok, plaintext}
+    def encrypt(plaintext, key) do
+      send(self(), {:encrypt, key})
+
+      {:ok, plaintext}
+    end
 
     @impl true
-    def decrypt(ciphertext, _key), do: {:ok, ciphertext}
+    def decrypt(ciphertext, key) do
+      send(self(), {:decrypt, key})
+
+      {:ok, ciphertext}
+    end
   end
 
   @secret_path "/tmp/secrex"
@@ -66,10 +74,15 @@ defmodule Mix.Tasks.SecrexTest do
 
     capture_io(fn -> Mix.Tasks.Secrex.Encrypt.run([]) end)
 
+    assert_received {:encrypt, key}
+    assert key == "1234567890"
+
     File.rm!(source_file)
     assert File.read!(source_file <> ".enc") == plaintext
 
     capture_io(fn -> Mix.Tasks.Secrex.Decrypt.run([]) end)
+
+    assert_received {:decrypt, ^key}
 
     assert File.read!(source_file) == plaintext
   end
