@@ -13,7 +13,7 @@ by adding `secrex` to our list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:secrex, "~> 0.1", runtime: false}
+    {:secrex, "~> 0.3", runtime: false}
   ]
 end
 ```
