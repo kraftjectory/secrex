@@ -1,6 +1,6 @@
 defmodule Secrex do
   @moduledoc """
-  Simple and secure secrets manager fo Elixir projects.
+  Simple and secure secrets manager for Elixir projects.
 
   ## Configuration
 
