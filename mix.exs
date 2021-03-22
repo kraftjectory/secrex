@@ -9,7 +9,7 @@ defmodule Secrex.MixProject do
     [
       app: :secrex,
       version: @version,
-      elixir: "~> 1.6",
+      elixir: "~> 1.7",
       deps: deps(),
       package: package(),
       name: @name,
