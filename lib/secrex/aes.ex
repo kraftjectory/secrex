@@ -16,7 +16,7 @@ defmodule Secrex.AES do
   @behaviour Cipher
 
   # Additional Authenticated Data.
-  @aad "AES256GCM"
+  @aad 'AES256GCM'
 
   @iv_length 16
   @tag_length 16
@@ -30,13 +30,7 @@ defmodule Secrex.AES do
     init_vector = initialize_vector(@iv_length)
     key_digest = hash(key)
 
-    {encrypted, tag} =
-      :crypto.block_encrypt(
-        :aes_gcm,
-        key_digest,
-        init_vector,
-        {@aad, plaintext, @tag_length}
-      )
+    {encrypted, tag} = :crypto.crypto_one_time_aead(:aes_gcm, key_digest, init_vector, plaintext, @aad, @tag_length, true)
 
     {:ok, init_vector <> tag <> encrypted}
   end
@@ -51,7 +45,7 @@ defmodule Secrex.AES do
 
     case ciphertext do
       <<init_vector::size(@iv_length)-bytes, tag::size(@tag_length)-bytes, encrypted::binary>> ->
-        case :crypto.block_decrypt(:aes_gcm, key_digest, init_vector, {@aad, encrypted, tag}) do
+        case :crypto.crypto_one_time_aead(:aes_gcm, key_digest, init_vector, encrypted, @aad, tag, false) do
           :error ->
             {:error, :incorrect_key_or_ciphertext}
 
