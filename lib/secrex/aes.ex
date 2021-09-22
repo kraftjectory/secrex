@@ -30,7 +30,17 @@ defmodule Secrex.AES do
     init_vector = initialize_vector(@iv_length)
     key_digest = hash(key)
 
-    {encrypted, tag} = :crypto.crypto_one_time_aead(:aes_gcm, key_digest, init_vector, plaintext, @aad, @tag_length, true)
+    {encrypted, tag} =
+      if function_exported?(:crypto, :crypto_one_time_aead, 7) do
+        :crypto.crypto_one_time_aead(:aes_gcm, key_digest, init_vector, plaintext, @aad, @tag_length, true)
+      else
+        :crypto.block_encrypt(
+          :aes_gcm,
+          key_digest,
+          init_vector,
+          {List.to_string(@aad), plaintext, @tag_length}
+        )
+      end
 
     {:ok, init_vector <> tag <> encrypted}
   end
@@ -45,12 +55,16 @@ defmodule Secrex.AES do
 
     case ciphertext do
       <<init_vector::size(@iv_length)-bytes, tag::size(@tag_length)-bytes, encrypted::binary>> ->
-        case :crypto.crypto_one_time_aead(:aes_gcm, key_digest, init_vector, encrypted, @aad, tag, false) do
-          :error ->
-            {:error, :incorrect_key_or_ciphertext}
+        result =
+          if function_exported?(:crypto, :crypto_one_time_aead, 7) do
+            :crypto.crypto_one_time_aead(:aes_gcm, key_digest, init_vector, encrypted, @aad, tag, false)
+          else
+            :crypto.block_decrypt(:aes_gcm, key_digest, init_vector, {List.to_string(@aad), encrypted, tag})
+          end
 
-          plaintext ->
-            {:ok, plaintext}
+        case result do
+          :error -> {:error, :incorrect_key_or_ciphertext}
+          plaintext -> {:ok, plaintext}
         end
 
       _ ->
