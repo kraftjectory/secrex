@@ -11,15 +11,14 @@ defmodule Secrex.AES do
 
   """
 
+  require __MODULE__.BlockEncrypt
+
+  alias __MODULE__.BlockEncrypt
   alias Secrex.Cipher
 
   @behaviour Cipher
 
-  # Additional Authenticated Data.
-  @aad "AES256GCM"
-
   @iv_length 16
-  @tag_length 16
 
   @doc """
   Encrypts data using AES256-GCM.
@@ -30,13 +29,7 @@ defmodule Secrex.AES do
     init_vector = initialize_vector(@iv_length)
     key_digest = hash(key)
 
-    {encrypted, tag} =
-      :crypto.block_encrypt(
-        :aes_gcm,
-        key_digest,
-        init_vector,
-        {@aad, plaintext, @tag_length}
-      )
+    {encrypted, tag} = BlockEncrypt.block_encrypt(key_digest, init_vector, plaintext)
 
     {:ok, init_vector <> tag <> encrypted}
   end
@@ -50,13 +43,12 @@ defmodule Secrex.AES do
     key_digest = hash(key)
 
     case ciphertext do
-      <<init_vector::size(@iv_length)-bytes, tag::size(@tag_length)-bytes, encrypted::binary>> ->
-        case :crypto.block_decrypt(:aes_gcm, key_digest, init_vector, {@aad, encrypted, tag}) do
-          :error ->
-            {:error, :incorrect_key_or_ciphertext}
+      <<init_vector::size(@iv_length)-bytes, tag::size(BlockEncrypt.tag_length())-bytes, encrypted::binary>> ->
+        result = BlockEncrypt.block_decrypt(key_digest, init_vector, encrypted, tag)
 
-          plaintext ->
-            {:ok, plaintext}
+        case result do
+          :error -> {:error, :incorrect_key_or_ciphertext}
+          plaintext -> {:ok, plaintext}
         end
 
       _ ->
