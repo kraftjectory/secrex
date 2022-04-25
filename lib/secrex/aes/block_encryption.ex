@@ -1,10 +1,7 @@
 defmodule Secrex.AES.BlockEncryption do
   @moduledoc """
-  Pick encryption and decryption based on availability of :crypto.block_encrypt/4
-  and :crypto.block_decrypt/4 which were removed in OTP24.
-
-  :crypto.crypto_one_time_aead/7 is available from OTP22, however the cipher :aes_gcm is not until OTP24,
-  hence we use the deprecated versions as long as they're available.
+  Pick encryption and decryption based on availability of :crypto.block_encrypt/4 and :crypto.block_decrypt/4 which were removed in OTP24.
+  :crypto.crypto_one_time_aead/7 is available from OTP22, however the cipher :aes_gcm is not until OTP24, hence we use the deprecated versions as long as they're available.
   """
 
   @aad 'AES256GCM'
@@ -12,7 +9,6 @@ defmodule Secrex.AES.BlockEncryption do
 
   defmacro tag_length(), do: @tag_length
 
-  # Use deprecated functions if they're available
   if Code.ensure_loaded?(:crypto) && function_exported?(:crypto, :block_encrypt, 4) do
     def block_encrypt(key_digest, init_vector, plaintext) do
       :crypto.block_encrypt(
