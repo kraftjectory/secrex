@@ -43,7 +43,8 @@ defmodule Secrex.AES do
     key_digest = hash(key)
 
     case ciphertext do
-      <<init_vector::size(@iv_length)-bytes, tag::size(BlockEncrypt.tag_length())-bytes, encrypted::binary>> ->
+      <<init_vector::size(@iv_length)-bytes, tag::size(BlockEncrypt.tag_length())-bytes,
+        encrypted::binary>> ->
         result = BlockEncrypt.block_decrypt(key_digest, init_vector, encrypted, tag)
 
         case result do
