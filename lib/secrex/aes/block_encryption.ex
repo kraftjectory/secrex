@@ -1,4 +1,4 @@
-defmodule Secrex.AES.BlockEncrypt do
+defmodule Secrex.AES.BlockEncryption do
   @moduledoc """
   Pick encryption and decryption based on availability of :crypto.block_encrypt/4
   and :crypto.block_decrypt/4 which were removed in OTP24.

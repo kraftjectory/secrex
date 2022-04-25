@@ -11,9 +11,9 @@ defmodule Secrex.AES do
 
   """
 
-  require __MODULE__.BlockEncrypt
+  import __MODULE__.BlockEncryption, only: [block_encrypt: 3, block_decrypt: 4]
 
-  alias __MODULE__.BlockEncrypt
+  alias __MODULE__.BlockEncryption
   alias Secrex.Cipher
 
   @behaviour Cipher
@@ -29,7 +29,7 @@ defmodule Secrex.AES do
     init_vector = initialize_vector(@iv_length)
     key_digest = hash(key)
 
-    {encrypted, tag} = BlockEncrypt.block_encrypt(key_digest, init_vector, plaintext)
+    {encrypted, tag} = block_encrypt(key_digest, init_vector, plaintext)
 
     {:ok, init_vector <> tag <> encrypted}
   end
@@ -43,9 +43,9 @@ defmodule Secrex.AES do
     key_digest = hash(key)
 
     case ciphertext do
-      <<init_vector::size(@iv_length)-bytes, tag::size(BlockEncrypt.tag_length())-bytes,
+      <<init_vector::size(@iv_length)-bytes, tag::size(BlockEncryption.tag_length())-bytes,
         encrypted::binary>> ->
-        result = BlockEncrypt.block_decrypt(key_digest, init_vector, encrypted, tag)
+        result = block_decrypt(key_digest, init_vector, encrypted, tag)
 
         case result do
           :error -> {:error, :incorrect_key_or_ciphertext}
