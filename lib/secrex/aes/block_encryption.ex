@@ -1,6 +1,6 @@
 defmodule Secrex.AES.BlockEncryption do
   @moduledoc """
-  Pick encryption and decryption based on availability of [:crypto.block_encrypt/4](https://www.erlang.org/docs/23/man/crypto.html#block_encrypt-4) and  [:crypto.block_decrypt/4](https://www.erlang.org/docs/23/man/crypto.html#block_decrypt-4) which were removed in OTP24.
+  Pick encryption and decryption based on availability of [:crypto.block_encrypt/4](https://www.erlang.org/docs/23/man/crypto.html#block_encrypt-4) and [:crypto.block_decrypt/4](https://www.erlang.org/docs/23/man/crypto.html#block_decrypt-4) which were removed in OTP24.
 
   `:crypto.crypto_one_time_aead/7` is available from OTP22, however the cipher `:aes_gcm` is not until OTP24, hence we use the deprecated versions as long as they're available.
   """
