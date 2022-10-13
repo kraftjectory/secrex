@@ -30,13 +30,7 @@ defmodule Secrex.AES do
     init_vector = initialize_vector(@iv_length)
     key_digest = hash(key)
 
-    {encrypted, tag} =
-      :crypto.block_encrypt(
-        :aes_gcm,
-        key_digest,
-        init_vector,
-        {@aad, plaintext, @tag_length}
-      )
+    {encrypted, tag} = encrypt(key_digest, init_vector, plaintext)
 
     {:ok, init_vector <> tag <> encrypted}
   end
@@ -51,7 +45,7 @@ defmodule Secrex.AES do
 
     case ciphertext do
       <<init_vector::size(@iv_length)-bytes, tag::size(@tag_length)-bytes, encrypted::binary>> ->
-        case :crypto.block_decrypt(:aes_gcm, key_digest, init_vector, {@aad, encrypted, tag}) do
+        case decrypt(key_digest, init_vector, encrypted, tag) do
           :error ->
             {:error, :incorrect_key_or_ciphertext}
 
@@ -67,4 +61,48 @@ defmodule Secrex.AES do
   defp hash(key), do: :crypto.hash(:sha256, key)
 
   defp initialize_vector(length), do: :crypto.strong_rand_bytes(length)
+
+  if Code.ensure_loaded?(:crypto) and function_exported?(:crypto, :block_encrypt, 4) do
+    def encrypt(key_digest, init_vector, plaintext) do
+      :crypto.block_encrypt(
+        :aes_gcm,
+        key_digest,
+        init_vector,
+        {@aad, plaintext, @tag_length}
+      )
+    end
+
+    def decrypt(key_digest, init_vector, encrypted, tag) do
+      :crypto.block_decrypt(
+        :aes_gcm,
+        key_digest,
+        init_vector,
+        {@aad, encrypted, tag}
+      )
+    end
+  else
+    def encrypt(key_digest, init_vector, plaintext) do
+      :crypto.crypto_one_time_aead(
+        :aes_gcm,
+        key_digest,
+        init_vector,
+        plaintext,
+        @aad,
+        @tag_length,
+        true
+      )
+    end
+
+    def decrypt(key_digest, init_vector, encrypted, tag) do
+      :crypto.crypto_one_time_aead(
+        :aes_gcm,
+        key_digest,
+        init_vector,
+        encrypted,
+        @aad,
+        tag,
+        false
+      )
+    end
+  end
 end
