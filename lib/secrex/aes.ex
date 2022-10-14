@@ -73,7 +73,7 @@ defmodule Secrex.AES do
   defp initialize_vector(length), do: :crypto.strong_rand_bytes(length)
 
   if Code.ensure_loaded?(:crypto) and function_exported?(:crypto, :block_encrypt, 4) do
-    def encrypt(key_digest, init_vector, plaintext, aad) do
+    defp encrypt(key_digest, init_vector, plaintext, aad) do
       :crypto.block_encrypt(
         :aes_gcm,
         key_digest,
@@ -82,7 +82,7 @@ defmodule Secrex.AES do
       )
     end
 
-    def decrypt(key_digest, init_vector, encrypted, tag, aad) do
+    defp decrypt(key_digest, init_vector, encrypted, tag, aad) do
       :crypto.block_decrypt(
         :aes_gcm,
         key_digest,
@@ -91,7 +91,7 @@ defmodule Secrex.AES do
       )
     end
   else
-    def encrypt(key_digest, init_vector, plaintext, aad) do
+    defp encrypt(key_digest, init_vector, plaintext, aad) do
       :crypto.crypto_one_time_aead(
         :aes_gcm,
         key_digest,
@@ -103,7 +103,7 @@ defmodule Secrex.AES do
       )
     end
 
-    def decrypt(key_digest, init_vector, encrypted, tag, aad) do
+    defp decrypt(key_digest, init_vector, encrypted, tag, aad) do
       :crypto.crypto_one_time_aead(
         :aes_gcm,
         key_digest,
