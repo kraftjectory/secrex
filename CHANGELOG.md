@@ -1,10 +1,15 @@
 # Changelog
 
+## v0.4.0
+
+  * `Secrex.AES` accepts additional authenticated data (AAD).
+  * Added support for OTP 24.
+
 ## v0.3.0
 
   * Started to ignore trailing whitespaces in encryption key.
   * Introduced `:cipher` option.
-  * Publicize `Secrex.AES`.
+  * Made `Secrex.AES` public.
 
 ## v0.2.1
 

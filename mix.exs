@@ -2,7 +2,7 @@ defmodule Secrex.MixProject do
   use Mix.Project
 
   @name "Secrex"
-  @version "0.3.0"
+  @version "0.4.0"
   @source_url "https://github.com/kraftjectory/secrex"
 
   def project() do
@@ -30,7 +30,7 @@ defmodule Secrex.MixProject do
   defp deps() do
     [
       {:stream_data, "~> 0.4", only: :test},
-      {:ex_doc, "~> 0.20.0", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.20", only: :dev, runtime: false}
     ]
   end
 
