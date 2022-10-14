@@ -26,7 +26,12 @@ defmodule Secrex.AES do
   """
   @spec encrypt(Cipher.plaintext(), Cipher.key()) :: {:ok, Cipher.ciphertext()}
   @impl true
-  def encrypt(plaintext, key, aad \\ @aad) do
+  def encrypt(plaintext, key), do: encrypt(plaintext, key, @aad)
+
+  @doc """
+  Same as `encrypt/2` but also accepts additional authenticated data (AAD).
+  """
+  def encrypt(plaintext, key, aad) do
     init_vector = initialize_vector(@iv_length)
     key_digest = hash(key)
 
@@ -40,7 +45,12 @@ defmodule Secrex.AES do
           {:ok, Cipher.plaintext()}
           | {:error, :invalid_ciphertext | :incorrect_key_or_ciphertext}
   @impl true
-  def decrypt(ciphertext, key, aad \\ @aad) do
+  def decrypt(ciphertext, key), do: decrypt(ciphertext, key, @aad)
+
+  @doc """
+  Same as `decrypt/2` but also accepts additional authenticated data (AAD).
+  """
+  def decrypt(ciphertext, key, aad) do
     key_digest = hash(key)
 
     case ciphertext do
