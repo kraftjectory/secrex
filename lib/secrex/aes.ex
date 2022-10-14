@@ -1,6 +1,6 @@
 defmodule Secrex.AES do
   @moduledoc """
-  This module is an implementation of Secrex.Cipher using AES256-GCM.
+  This module is an implementation of Secrex.Cipher using AES-256-GCM.
 
   ## Example
 
@@ -22,30 +22,30 @@ defmodule Secrex.AES do
   @tag_length 16
 
   @doc """
-  Encrypts data using AES256-GCM.
+  Encrypts data using AES-256-GCM.
   """
   @spec encrypt(Cipher.plaintext(), Cipher.key()) :: {:ok, Cipher.ciphertext()}
   @impl true
-  def encrypt(plaintext, key) do
+  def encrypt(plaintext, key, aad \\ @aad) do
     init_vector = initialize_vector(@iv_length)
     key_digest = hash(key)
 
-    {encrypted, tag} = encrypt(key_digest, init_vector, plaintext)
+    {encrypted, tag} = encrypt(key_digest, init_vector, plaintext, aad)
 
     {:ok, init_vector <> tag <> encrypted}
   end
 
-  @doc "Decrypts data using AES256-GCM"
+  @doc "Decrypts data using AES-256-GCM."
   @spec decrypt(Cipher.ciphertext(), Cipher.key()) ::
           {:ok, Cipher.plaintext()}
           | {:error, :invalid_ciphertext | :incorrect_key_or_ciphertext}
   @impl true
-  def decrypt(ciphertext, key) do
+  def decrypt(ciphertext, key, aad \\ @aad) do
     key_digest = hash(key)
 
     case ciphertext do
       <<init_vector::size(@iv_length)-bytes, tag::size(@tag_length)-bytes, encrypted::binary>> ->
-        case decrypt(key_digest, init_vector, encrypted, tag) do
+        case decrypt(key_digest, init_vector, encrypted, tag, aad) do
           :error ->
             {:error, :incorrect_key_or_ciphertext}
 
@@ -63,43 +63,43 @@ defmodule Secrex.AES do
   defp initialize_vector(length), do: :crypto.strong_rand_bytes(length)
 
   if Code.ensure_loaded?(:crypto) and function_exported?(:crypto, :block_encrypt, 4) do
-    def encrypt(key_digest, init_vector, plaintext) do
+    def encrypt(key_digest, init_vector, plaintext, aad) do
       :crypto.block_encrypt(
         :aes_gcm,
         key_digest,
         init_vector,
-        {@aad, plaintext, @tag_length}
+        {aad, plaintext, @tag_length}
       )
     end
 
-    def decrypt(key_digest, init_vector, encrypted, tag) do
+    def decrypt(key_digest, init_vector, encrypted, tag, aad) do
       :crypto.block_decrypt(
         :aes_gcm,
         key_digest,
         init_vector,
-        {@aad, encrypted, tag}
+        {aad, encrypted, tag}
       )
     end
   else
-    def encrypt(key_digest, init_vector, plaintext) do
+    def encrypt(key_digest, init_vector, plaintext, aad) do
       :crypto.crypto_one_time_aead(
         :aes_gcm,
         key_digest,
         init_vector,
         plaintext,
-        @aad,
+        aad,
         @tag_length,
         true
       )
     end
 
-    def decrypt(key_digest, init_vector, encrypted, tag) do
+    def decrypt(key_digest, init_vector, encrypted, tag, aad) do
       :crypto.crypto_one_time_aead(
         :aes_gcm,
         key_digest,
         init_vector,
         encrypted,
-        @aad,
+        aad,
         tag,
         false
       )
