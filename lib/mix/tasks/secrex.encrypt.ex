@@ -10,10 +10,21 @@ defmodule Mix.Tasks.Secrex.Encrypt do
   @shortdoc "Encrypts secrets to the configured files"
 
   @impl true
-  def run(_args) do
-    key = encryption_key()
+  def run(["--bucket", bucket]) do
+    bucket
+    |> String.to_atom()
+    |> encrypt()
+  end
 
-    for path <- secret_files() do
+  @impl true
+  def run([]) do
+    Enum.map(buckets(), &encrypt/1)
+  end
+
+  defp encrypt(bucket) do
+    key = encryption_key(bucket)
+
+    for path <- secret_files(bucket) do
       Mix.shell().info("Encrypting #{path}")
 
       {:ok, encrypted} = encrypt(path, key)
