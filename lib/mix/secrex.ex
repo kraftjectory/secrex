@@ -4,13 +4,30 @@ defmodule Mix.Secrex do
   """
 
   @doc false
-  def secret_files() do
-    Application.get_env(:secrex, :files, [])
+  def secret_files(bucket) do
+    Application.get_env(:secrex, :buckets, [])
+    |> Keyword.get(bucket, [])
+    |> Keyword.get(:files, [])
   end
 
   @doc false
-  def encryption_key() do
-    key_path = Application.get_env(:secrex, :key_file)
+  def buckets() do
+    :secrex
+    |> Application.get_all_env()
+    |> Keyword.get(:buckets, [])
+    |> Keyword.keys()
+  end
+
+  @doc false
+  def get_bucket(bucket) do
+    :secrex
+    |> Application.get_env(:buckets)
+    |> Keyword.get(bucket, [])
+  end
+
+  @doc false
+  def encryption_key(bucket) do
+    key_path = bucket |> get_bucket() |> Keyword.get(:key_file)
 
     if key_path do
       key_path |> Path.expand() |> File.read!()
@@ -26,7 +43,7 @@ defmodule Mix.Secrex do
   end
 
   @doc ~S"""
-  Checks if the local decrypted files are in sync with the encrypted ones.
+  Checks either the specified or all buckets decrypted files are in sync with the encrypted ones.
 
   This could be useful in deployment process. For instance, to abort deployment if secrets diverge:
 
@@ -36,12 +53,27 @@ defmodule Mix.Secrex do
         )
       end
 
+      if Mix.Secrex.secret_files_changed?(:my_bucket) do
+        Mix.raise(
+          "Secret files are not in sync. Please run \"mix secrex.decrypt --bucket my_bucket\" to retrieve latest updates."
+        )
+      end
   """
   @spec secret_files_changed?() :: boolean()
   def secret_files_changed?() do
-    key = encryption_key()
+    changed_files = Enum.map(buckets(), &do_secret_files_changed?/1)
+    Enum.any?(changed_files)
+  end
 
-    Enum.any?(secret_files(), fn path ->
+  @spec secret_files_changed?(bucket :: atom()) :: boolean()
+  def secret_files_changed?(bucket) do
+    do_secret_files_changed?(bucket)
+  end
+
+  defp do_secret_files_changed?(bucket) do
+    key = encryption_key(bucket)
+
+    Enum.any?(secret_files(bucket), fn path ->
       enc_path = encrypted_path(path)
       decrypted = decrypt(enc_path, key)
       File.read!(path) != decrypted
