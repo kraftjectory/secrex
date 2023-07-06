@@ -116,7 +116,7 @@ defmodule Mix.Tasks.SecrexTest do
 
     updated_bucket = put_files(:my_test, [source_file])
 
-    Application.put_env(:secrex, :buckets, [my_test: updated_bucket])
+    Application.put_env(:secrex, :buckets, my_test: updated_bucket)
     Application.put_env(:secrex, :cipher, PlaintextCipher)
 
     capture_io(fn -> Mix.Tasks.Secrex.Encrypt.run([]) end)
@@ -148,7 +148,7 @@ defmodule Mix.Tasks.SecrexTest do
 
     updated_bucket = put_files(:my_test, [source_file])
 
-    Application.put_env(:secrex, :buckets, [my_test: updated_bucket])
+    Application.put_env(:secrex, :buckets, my_test: updated_bucket)
 
     output =
       capture_io(fn ->
